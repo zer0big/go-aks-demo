@@ -1,0 +1,31 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildNumber: 0.0.$(Build.BuildId)
+
+steps:
+- task: Docker@2
+  inputs:
+    containerRegistry: 'zeroacr'
+    repository: 'zero-go-azure-demo'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
+    tags: |
+      $(buildNumber)
+      latest
+
+- bash: sed -i "s/latest/$(buildNumber)/g" k8s/k8s-deployment.yml
+
+- task: Kubernetes@1
+  inputs:
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'zeroaks'
+    command: 'apply'
+    useConfigurationFile: true
+    configuration: 'k8s/k8s-deployment.yml'
+    secretType: 'dockerRegistry'
+    containerRegistryType: 'Azure Container Registry'
