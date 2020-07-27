@@ -6,12 +6,11 @@ import (
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "I'm a GO application running inside Docker.")
+	fmt.Fprintf(w, "I'm a Emart GO application running inside Docker.")
 
 }
 
 func main() {
 	fmt.Println("Basic web server is starting on port 8080...")
 	http.HandleFunc("/", indexHandler)
-	http.ListenAndServe(":8080", nil)
-}
+	http.ListenAndServe(":8080", nil
